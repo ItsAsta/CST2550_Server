@@ -262,7 +262,6 @@ public class Server {
 
     private static List<String> fetchUpdateBooking(String bookingId) {
         List<String> booking = new ArrayList<>();
-
         String[] query = bookingId.split(SEPARATOR);
         try {
             ResultSet result = connection.createStatement().executeQuery(

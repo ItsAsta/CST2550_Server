@@ -1,13 +1,5 @@
 package dev.itsasta;
 
-/*
- * Developed By Muhammed-Abdi on 24/12/2019 18:53.
- * Last Modified 24/12/2019 22:33.
- * Credits: Yasper (AI Developer of NeuralLib), Burak (Owner of BurakLite Robot), Dogerina (Founder of all RS Bots)
- * RSPeer.org
- * Copyright (c) 2019. All rights reserved.
- */
-
 import dev.itsasta.utils.ServerUtils;
 
 import java.io.IOException;
@@ -21,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Server {
@@ -49,36 +42,44 @@ public class Server {
                     inputStream = new ObjectInputStream(socket.getInputStream());
                     outputStream = new ObjectOutputStream(socket.getOutputStream());
                     while (socket.isConnected()) {
-                        String str = inputStream.readUTF();
-                        System.out.println(str);
+                        String queryInput = inputStream.readUTF();
+                        System.out.println(queryInput);
 
-                        if (str.contains("listall")) {
+                        if (queryInput.contains("listall")) {
                             ServerUtils.passData(outputStream, listAllBookings());
                         }
 
-                        if (str.contains("listpt")) {
-                            ServerUtils.passData(outputStream, listPTBookings(str));
+                        if (queryInput.contains("listpt")) {
+                            ServerUtils.passData(outputStream, listPTBookings(queryInput));
                             System.out.println("Showing specific trainers!");
                         }
 
-                        if (str.contains("listclient")) {
-                            ServerUtils.passData(outputStream, listClientBookings(str));
+                        if (queryInput.contains("listclient")) {
+                            ServerUtils.passData(outputStream, listClientBookings(queryInput));
                             System.out.println("Showing specific clients!");
                         }
 
-                        if (str.contains("listdate")) {
-                            ServerUtils.passData(outputStream, listDateBookings(str));
+                        if (queryInput.contains("listdate")) {
+                            ServerUtils.passData(outputStream, listDateBookings(queryInput));
                             System.out.println("Showing specific dates!");
                         }
 
-                        if (str.contains("add")) {
-                            addBooking(str);
+                        if (queryInput.contains("add")) {
+                            addBooking(queryInput);
                             System.out.println("Added booking!");
                         }
 
-                        if (str.contains("remove")) {
-                            removeBooking(str);
+                        if (queryInput.contains("remove")) {
+                            removeBooking(queryInput);
                             System.out.println("Removed booking!");
+                        }
+                        
+                        if (queryInput.contains("update")) {
+                            updateBooking(queryInput);
+                        }
+
+                        if (queryInput.contains("fetch")) {
+                            ServerUtils.passData(outputStream, fetchUpdateBooking(queryInput));
                         }
                     }
                 } catch (Exception e) {
@@ -244,16 +245,47 @@ public class Server {
         }
     }
 
-    private static void updateBooking(int bookingId, int trainer_id, int client_id, String dateTime, String duration) {
-        try {
-            connection.createStatement().executeUpdate("UPDATE bookings SET " + "trainer_fk = " + trainer_id + ", client_fk = " +
-                    client_id + ", date_time = '" + dateTime + "', duration = " + duration +
-                    " WHERE " + "booking_id = " + bookingId);
+    private static void updateBooking(String stringQuery) {
+        String[] query = stringQuery.split(SEPARATOR);
+        System.out.println("yooo");
 
-            System.out.println("Successfully updated booking with ID: " + bookingId);
+        try {
+            connection.createStatement().executeUpdate("UPDATE bookings SET " + "trainer_fk = " + query[2] +
+                    ", date_time = '" + query[3] + "', duration = " + query[4] +
+                    " WHERE " + "booking_id = " + query[1]);
+
+            System.out.println("Successfully updated booking with ID: " + query[1]);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static List<String> fetchUpdateBooking(String bookingId) {
+        List<String> booking = new ArrayList<>();
+
+        String[] query = bookingId.split(SEPARATOR);
+        try {
+            ResultSet result = connection.createStatement().executeQuery(
+                    "SELECT DISTINCT bookings.booking_id, bookings.trainer_fk, bookings.client_fk, " +
+                            "DATE_FORMAT(bookings.date_time, '%Y-%m-%d %H:%i'), bookings.duration, " +
+                            "clients.first_name, " + "clients.last_name, clients.dob, " +
+                            "trainers.first_name, trainers.last_name " +
+                            "FROM bookings JOIN clients ON clients.client_id = bookings.client_fk " +
+                            "JOIN trainers ON bookings.trainer_fk = trainers.trainer_id " +
+                            "WHERE bookings.booking_id = " + query[1]);
+            while (result.next()) {
+                for (int i = 1; i <= 10; i++) {
+                    booking.add(result.getString(i));
+                }
+            }
+
+            System.out.println(booking);
+
+            return booking;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

@@ -28,8 +28,10 @@ public class Server {
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/gym", "root", "");
         } catch (SQLException e) {
-            System.out.println("Can't connect to DB: " + e);
+            System.err.println("Can't connect to DB: " + e);
+            System.exit(0);
         }
+
 
         ServerSocket serverSocket = new ServerSocket(4999);
         System.out.println("Waiting for a connection...");
@@ -73,7 +75,7 @@ public class Server {
                             removeBooking(queryInput);
                             System.out.println("Removed booking!");
                         }
-                        
+
                         if (queryInput.contains("update")) {
                             updateBooking(queryInput);
                         }
@@ -109,7 +111,6 @@ public class Server {
 
             while (resultSet.next()) {
                 for (int i = 2; i <= 10; i++) {
-//                    System.out.println(resultSet.getString(i));
                     tempList.add(resultSet.getString(i));
                 }
                 bookings.put(Integer.parseInt(resultSet.getString(1)), new ArrayList<>(tempList));
@@ -247,7 +248,6 @@ public class Server {
 
     private static void updateBooking(String stringQuery) {
         String[] query = stringQuery.split(SEPARATOR);
-        System.out.println("yooo");
 
         try {
             connection.createStatement().executeUpdate("UPDATE bookings SET " + "trainer_fk = " + query[2] +

@@ -49,6 +49,7 @@ public class Server {
 
                         if (queryInput.contains("listall")) {
                             ServerUtils.passData(outputStream, listAllBookings());
+                            System.out.println("Showing all bookings!");
                         }
 
                         if (queryInput.contains("listpt")) {
@@ -76,12 +77,29 @@ public class Server {
                             System.out.println("Removed booking!");
                         }
 
-                        if (queryInput.contains("update")) {
+                        if (queryInput.contains("updatebooking")) {
                             updateBooking(queryInput);
+                            System.out.println("Updated booking!");
                         }
 
-                        if (queryInput.contains("fetch")) {
+                        if (queryInput.contains("updateclient")) {
+                            updateClient(queryInput);
+                            System.out.println("Updated client!");
+                        }
+
+                        if (queryInput.contains("fetchbooking")) {
                             ServerUtils.passData(outputStream, fetchUpdateBooking(queryInput));
+                            System.out.println("Fetching booking!");
+                        }
+
+                        if (queryInput.contains("fetchclient")) {
+                            ServerUtils.passData(outputStream, fetchClient(queryInput));
+                            System.out.println("Fetching client!");
+                        }
+
+                        if (queryInput.contains("register")) {
+                            registerClient(queryInput);
+                            System.out.println("Registered client!");
                         }
                     }
                 } catch (Exception e) {
@@ -102,12 +120,12 @@ public class Server {
 
         try {
             ResultSet resultSet = connection.createStatement()
-                    .executeQuery("SELECT DISTINCT bookings.booking_id, bookings.trainer_fk, bookings.client_fk, " +
-                            "DATE_FORMAT(bookings.date_time, '%Y-%m-%d %H:%i'), bookings.duration, clients.first_name, " +
-                            "clients.last_name, clients.dob, " +
-                            "trainers.first_name, trainers.last_name " +
-                            "FROM bookings JOIN clients ON clients.client_id = bookings.client_fk " +
-                            "JOIN trainers ON bookings.trainer_fk = trainers.trainer_id");
+                    .executeQuery("SELECT DISTINCT booking.booking_id, booking.trainer_fk, booking.client_fk, " +
+                            "DATE_FORMAT(booking.date_time, '%Y-%m-%d %H:%i'), booking.duration, client.first_name, " +
+                            "client.last_name, client.dob, " +
+                            "trainer.first_name, trainer.last_name " +
+                            "FROM booking JOIN client ON client.client_id = booking.client_fk " +
+                            "JOIN trainer ON booking.trainer_fk = trainer.trainer_id");
 
             while (resultSet.next()) {
                 for (int i = 2; i <= 10; i++) {
@@ -135,13 +153,13 @@ public class Server {
         String[] id = trainerId.split(SEPARATOR);
 
         try {
-            ResultSet result = connection.createStatement().executeQuery("SELECT DISTINCT bookings.booking_id, bookings.trainer_fk, bookings.client_fk, " +
-                    "DATE_FORMAT(bookings.date_time, '%Y-%m-%d %H:%i'), bookings.duration, clients.first_name, " +
-                    "clients.last_name, clients.dob, " +
-                    "trainers.first_name, trainers.last_name " +
-                    "FROM bookings JOIN clients ON clients.client_id = bookings.client_fk " +
-                    "JOIN trainers ON bookings.trainer_fk = trainers.trainer_id " +
-                    "WHERE trainers.trainer_id = " + id[1]);
+            ResultSet result = connection.createStatement().executeQuery("SELECT DISTINCT booking.booking_id, booking.trainer_fk, booking.client_fk, " +
+                    "DATE_FORMAT(booking.date_time, '%Y-%m-%d %H:%i'), booking.duration, client.first_name, " +
+                    "client.last_name, client.dob, " +
+                    "trainer.first_name, trainer.last_name " +
+                    "FROM booking JOIN client ON client.client_id = booking.client_fk " +
+                    "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
+                    "WHERE trainer.trainer_id = " + id[1]);
             while (result.next()) {
                 for (int i = 2; i <= 10; i++) {
                     tempList.add(result.getString(i));
@@ -167,13 +185,13 @@ public class Server {
         String[] id = clientId.split(SEPARATOR);
 
         try {
-            ResultSet result = connection.createStatement().executeQuery("SELECT DISTINCT bookings.booking_id, bookings.trainer_fk, bookings.client_fk, " +
-                    "DATE_FORMAT(bookings.date_time, '%Y-%m-%d %H:%i'), bookings.duration, clients.first_name, " +
-                    "clients.last_name, clients.dob, " +
-                    "trainers.first_name, trainers.last_name " +
-                    "FROM bookings JOIN clients ON clients.client_id = bookings.client_fk " +
-                    "JOIN trainers ON bookings.trainer_fk = trainers.trainer_id " +
-                    "WHERE clients.client_id = " + id[1]);
+            ResultSet result = connection.createStatement().executeQuery("SELECT DISTINCT booking.booking_id, booking.trainer_fk, booking.client_fk, " +
+                    "DATE_FORMAT(booking.date_time, '%Y-%m-%d %H:%i'), booking.duration, client.first_name, " +
+                    "client.last_name, client.dob, " +
+                    "trainer.first_name, trainer.last_name " +
+                    "FROM booking JOIN client ON client.client_id = booking.client_fk " +
+                    "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
+                    "WHERE client.client_id = " + id[1]);
             while (result.next()) {
                 for (int i = 2; i <= 10; i++) {
                     tempList.add(result.getString(i));
@@ -200,13 +218,13 @@ public class Server {
 
         try {
             ResultSet result = connection.createStatement().executeQuery(
-                    "SELECT DISTINCT bookings.booking_id, bookings.trainer_fk, bookings.client_fk, " +
-                            "DATE_FORMAT(bookings.date_time, '%Y-%m-%d %H:%i'), bookings.duration, " +
-                            "clients.first_name, " + "clients.last_name, clients.dob, " +
-                            "trainers.first_name, trainers.last_name " +
-                            "FROM bookings JOIN clients ON clients.client_id = bookings.client_fk " +
-                            "JOIN trainers ON bookings.trainer_fk = trainers.trainer_id " +
-                            "WHERE DATE_FORMAT(bookings.date_time, '%Y-%m-%d') BETWEEN '" + date[1] + "' AND '" + date[2] + "'");
+                    "SELECT DISTINCT booking.booking_id, booking.trainer_fk, booking.client_fk, " +
+                            "DATE_FORMAT(booking.date_time, '%Y-%m-%d %H:%i'), booking.duration, " +
+                            "client.first_name, " + "client.last_name, client.dob, " +
+                            "trainer.first_name, trainer.last_name " +
+                            "FROM booking JOIN client ON client.client_id = booking.client_fk " +
+                            "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
+                            "WHERE DATE_FORMAT(booking.date_time, '%Y-%m-%d') BETWEEN '" + date[1] + "' AND '" + date[2] + "'");
             while (result.next()) {
                 for (int i = 2; i <= 10; i++) {
                     tempList.add(result.getString(i));
@@ -227,7 +245,7 @@ public class Server {
 
         try {
             if (connection != null) {
-                connection.createStatement().executeUpdate("DELETE FROM bookings WHERE bookings.booking_id = " + query[1]);
+                connection.createStatement().executeUpdate("DELETE FROM booking WHERE booking.booking_id = " + query[1]);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -237,7 +255,7 @@ public class Server {
     private static void addBooking(String booking) {
         String[] query = booking.split(SEPARATOR);
         try {
-            connection.createStatement().executeUpdate("INSERT INTO bookings (trainer_fk, client_fk, date_time, duration) VALUES ("
+            connection.createStatement().executeUpdate("INSERT INTO booking (trainer_fk, client_fk, date_time, duration) VALUES ("
                     + query[1] + ", " + query[2] + ", '" + query[3] + "', " + query[4] + ")");
 
 
@@ -250,11 +268,24 @@ public class Server {
         String[] query = stringQuery.split(SEPARATOR);
 
         try {
-            connection.createStatement().executeUpdate("UPDATE bookings SET " + "trainer_fk = " + query[2] +
+            connection.createStatement().executeUpdate("UPDATE booking SET " + "trainer_fk = " + query[2] +
                     ", date_time = '" + query[3] + "', duration = " + query[4] +
                     " WHERE " + "booking_id = " + query[1]);
 
-            System.out.println("Successfully updated booking with ID: " + query[1]);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void updateClient(String stringQuery) {
+        String[] query = stringQuery.split(SEPARATOR);
+
+        try {
+            connection.createStatement().executeUpdate("UPDATE client SET " + "first_name = '" + query[2] +
+                    "', last_name = '" + query[3] + "', dob = '" + query[4] + "', weight = " + query[5] + ", height = " + query[6]
+                    + ", mobile_no = '" + query[7] + "', focus = '" + query[8] + "'" +
+                    " WHERE " + "client.client_id = " + query[1]);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -265,26 +296,60 @@ public class Server {
         String[] query = bookingId.split(SEPARATOR);
         try {
             ResultSet result = connection.createStatement().executeQuery(
-                    "SELECT DISTINCT bookings.booking_id, bookings.trainer_fk, bookings.client_fk, " +
-                            "DATE_FORMAT(bookings.date_time, '%Y-%m-%d %H:%i'), bookings.duration, " +
-                            "clients.first_name, " + "clients.last_name, clients.dob, " +
-                            "trainers.first_name, trainers.last_name " +
-                            "FROM bookings JOIN clients ON clients.client_id = bookings.client_fk " +
-                            "JOIN trainers ON bookings.trainer_fk = trainers.trainer_id " +
-                            "WHERE bookings.booking_id = " + query[1]);
+                    "SELECT DISTINCT booking.booking_id, booking.trainer_fk, booking.client_fk, " +
+                            "DATE_FORMAT(booking.date_time, '%Y-%m-%d %H:%i'), booking.duration, " +
+                            "client.first_name, " + "client.last_name, client.dob, " +
+                            "trainer.first_name, trainer.last_name " +
+                            "FROM booking JOIN client ON client.client_id = booking.client_fk " +
+                            "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
+                            "WHERE booking.booking_id = " + query[1]);
             while (result.next()) {
                 for (int i = 1; i <= 10; i++) {
                     booking.add(result.getString(i));
                 }
             }
 
-            System.out.println(booking);
 
             return booking;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static List<String> fetchClient(String clientId) {
+        List<String> client = new ArrayList<>();
+        String[] query = clientId.split(SEPARATOR);
+        try {
+            ResultSet result = connection.createStatement().executeQuery(
+                    "SELECT DISTINCT client.client_id, client.first_name, client.last_name, " +
+                            "DATE_FORMAT(client.dob, '%Y-%m-%d'), client.weight, " +
+                            "client.height, " + "client.mobile_no, client.focus " +
+                            "FROM client WHERE client.client_id = "+ query[1]);
+            while (result.next()) {
+                for (int i = 1; i <= 8; i++) {
+                    client.add(result.getString(i));
+                }
+            }
+
+            return client;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static void registerClient(String stringQuery) {
+        String[] query = stringQuery.split(SEPARATOR);
+        try {
+            connection.createStatement().executeUpdate("INSERT INTO client (first_name, last_name, dob, weight, height, mobile_no, focus) VALUES " +
+                    "('" + query[1] + "', '" + query[2] + "', '" + query[3] + "', '" + query[4] + "', " + query[5] + ", '" + query[6] + "', '" + query[7] + "')");
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

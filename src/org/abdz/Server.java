@@ -158,7 +158,7 @@ public class Server {
                             "client.last_name, client.dob, " +
                             "trainer.first_name, trainer.last_name " +
                             "FROM booking JOIN client ON client.client_id = booking.client_fk " +
-                            "JOIN trainer ON booking.trainer_fk = trainer.trainer_id");
+                            "JOIN trainer ON booking.trainer_fk = trainer.trainer_id;");
 
 //            A while loop iterating over the results
             while (resultSet.next()) {
@@ -205,7 +205,7 @@ public class Server {
                     "trainer.first_name, trainer.last_name " +
                     "FROM booking JOIN client ON client.client_id = booking.client_fk " +
                     "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
-                    "WHERE trainer.trainer_id = " + id[1]);
+                    "WHERE trainer.trainer_id = " + id[1] + ";");
 //            A while loop iterating over the results
             while (result.next()) {
 //                A for loop starting from index 2 to until 10
@@ -251,7 +251,7 @@ public class Server {
                     "trainer.first_name, trainer.last_name " +
                     "FROM booking JOIN client ON client.client_id = booking.client_fk " +
                     "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
-                    "WHERE client.client_id = " + id[1]);
+                    "WHERE client.client_id = " + id[1] + ";");
 //            A while loop iterating over the results
             while (result.next()) {
 //                A for loop starting from index 2 to until 10
@@ -296,7 +296,7 @@ public class Server {
                             "trainer.first_name, trainer.last_name " +
                             "FROM booking JOIN client ON client.client_id = booking.client_fk " +
                             "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
-                            "WHERE DATE_FORMAT(booking.date_time, '%Y-%m-%d') BETWEEN '" + date[1] + "' AND '" + date[2] + "'");
+                            "WHERE DATE_FORMAT(booking.date_time, '%Y-%m-%d') BETWEEN '" + date[1] + "' AND '" + date[2] + "';");
 //            A while loop iterating over the results
             while (result.next()) {
 //                A for loop starting from index 2 to 10
@@ -329,7 +329,7 @@ public class Server {
 
         try {
 //            Execute update query
-            connection.createStatement().executeUpdate("DELETE FROM booking WHERE booking.booking_id = " + query[1]);
+            connection.createStatement().executeUpdate("DELETE FROM booking WHERE booking.booking_id = " + query[1] + ";");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -346,7 +346,7 @@ public class Server {
         try {
 //            Execute update query
             connection.createStatement().executeUpdate("INSERT INTO booking (trainer_fk, client_fk, date_time, duration) VALUES ("
-                    + query[1] + ", " + query[2] + ", '" + query[3] + "', " + query[4] + ")");
+                    + query[1] + ", " + query[2] + ", '" + query[3] + "', " + query[4] + ");");
 
 
         } catch (SQLException e) {
@@ -367,7 +367,7 @@ public class Server {
 //            Execute update query
             connection.createStatement().executeUpdate("UPDATE booking SET " + "trainer_fk = " + query[2] +
                     ", date_time = '" + query[3] + "', duration = " + query[4] +
-                    " WHERE " + "booking_id = " + query[1]);
+                    " WHERE " + "booking_id = " + query[1] + ";");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -388,7 +388,7 @@ public class Server {
             connection.createStatement().executeUpdate("UPDATE client SET " + "first_name = '" + query[2] +
                     "', last_name = '" + query[3] + "', dob = '" + query[4] + "', weight = " + query[5] + ", height = " + query[6]
                     + ", mobile_no = '" + query[7] + "', focus = '" + query[8] + "'" +
-                    " WHERE " + "client.client_id = " + query[1]);
+                    " WHERE " + "client.client_id = " + query[1] + ";");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -415,7 +415,7 @@ public class Server {
                             "trainer.first_name, trainer.last_name " +
                             "FROM booking JOIN client ON client.client_id = booking.client_fk " +
                             "JOIN trainer ON booking.trainer_fk = trainer.trainer_id " +
-                            "WHERE booking.booking_id = " + query[1]);
+                            "WHERE booking.booking_id = " + query[1] + ";");
 //            A while loop iterating over the results
             while (result.next()) {
 //                A for loop starting from index 1 to 10
@@ -451,7 +451,7 @@ public class Server {
                     "SELECT DISTINCT client.client_id, client.first_name, client.last_name, " +
                             "DATE_FORMAT(client.dob, '%Y-%m-%d'), client.weight, " +
                             "client.height, " + "client.mobile_no, client.focus " +
-                            "FROM client WHERE client.client_id = " + query[1]);
+                            "FROM client WHERE client.client_id = " + query[1] + ";");
 //            A while loop iterating over the results
             while (result.next()) {
 //                A for loop starting from index 1 to 8
@@ -481,7 +481,7 @@ public class Server {
         try {
 //            Execute update query
             connection.createStatement().executeUpdate("INSERT INTO client (first_name, last_name, dob, weight, height, mobile_no, focus) VALUES " +
-                    "('" + query[1] + "', '" + query[2] + "', '" + query[3] + "', '" + query[4] + "', " + query[5] + ", '" + query[6] + "', '" + query[7] + "')");
+                    "('" + query[1] + "', '" + query[2] + "', '" + query[3] + "', '" + query[4] + "', " + query[5] + ", '" + query[6] + "', '" + query[7] + "');");
         } catch (SQLException e) {
             e.printStackTrace();
         }
